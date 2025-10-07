@@ -6,12 +6,10 @@ import 'providers/queue_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Supabase with your actual values
   const supabaseUrl = 'https://rcfhiivyvtgichpsopkn.supabase.co';
   const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjZmhpaXZ5dnRnaWNocHNvcGtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzNDQ5NTUsImV4cCI6MjA3NDkyMDk1NX0.1FDV-f2DxdA-W_ncfSa_xcWn93M37oSiK-CYIMgJy2A';
 
-  // Initialize Supabase client
+  // Initialiser Supabase client
   final supabaseClient = SupabaseClient(supabaseUrl, supabaseAnonKey);
 
   runApp(MyApp(supabaseClient: supabaseClient));
@@ -27,7 +25,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => QueueProvider(supabaseClient: supabaseClient),
       child: MaterialApp(
-        title: 'Waiting Room',
+        title: 'Salle d\'Attente',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
@@ -53,7 +51,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Waiting Room'),
+        title: const Text('Salle d\'Attente'),
         centerTitle: true,
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
@@ -76,14 +74,14 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Input Section
+            // Section de saisie
             Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _nameController,
                     decoration: const InputDecoration(
-                      hintText: 'Enter client name',
+                      hintText: 'Entrez le nom du client',
                       border: OutlineInputBorder(),
                       contentPadding: EdgeInsets.symmetric(horizontal: 12),
                     ),
@@ -99,18 +97,18 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                   onPressed: () {
                     _addClient(context, _nameController.text);
                   },
-                  child: const Text('Add'),
+                  child: const Text('Ajouter'),
                 ),
               ],
             ),
             const SizedBox(height: 20),
 
-            // Queue Title
+            // Titre de la file d'attente
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Current Queue',
+                  'File d\'Attente Actuelle',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Consumer<QueueProvider>(
@@ -128,7 +126,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
             ),
             const SizedBox(height: 10),
 
-            // Queue List
+            // Liste de la file d'attente
             Expanded(
               child: Consumer<QueueProvider>(
                 builder: (context, provider, child) {
@@ -144,12 +142,12 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                           ),
                           SizedBox(height: 16),
                           Text(
-                            'No one in queue yet...',
+                            'Personne dans la file d\'attente...',
                             style: TextStyle(fontSize: 16, color: Colors.grey),
                           ),
                           SizedBox(height: 8),
                           Text(
-                            'Add the first client to get started!',
+                            'Ajoutez le premier client pour commencer!',
                             style: TextStyle(fontSize: 12, color: Colors.grey),
                           ),
                         ],
@@ -188,7 +186,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                 ),
                               ),
                               subtitle: Text(
-                                'Added: ${_formatDate(client.createdAt)}',
+                                'Ajouté: ${_formatDate(client.createdAt)}',
                                 style: const TextStyle(fontSize: 12),
                               ),
                               trailing: IconButton(
@@ -210,7 +208,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
               ),
             ),
 
-            // Next Button
+            // Bouton Suivant
             const SizedBox(height: 20),
             Consumer<QueueProvider>(
               builder: (context, provider, child) {
@@ -220,7 +218,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                   },
                   icon: const Icon(Icons.arrow_forward),
                   label: Text(
-                    provider.clients.isEmpty ? 'Queue Empty' : 'Next Client',
+                    provider.clients.isEmpty ? 'File Vide' : 'Client Suivant',
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: provider.clients.isEmpty ? Colors.grey : Colors.green,
@@ -239,7 +237,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   Future<void> _addClient(BuildContext context, String name) async {
     final trimmedName = name.trim();
     if (trimmedName.isEmpty) {
-      _showSnackBar(context, 'Please enter a name');
+      _showSnackBar(context, 'Veuillez entrer un nom');
       return;
     }
 
@@ -250,9 +248,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     try {
       await context.read<QueueProvider>().addClient(trimmedName);
       _nameController.clear();
-      _showSnackBar(context, 'Added $trimmedName to queue');
+      _showSnackBar(context, '$trimmedName ajouté à la file');
     } catch (e) {
-      _showSnackBar(context, 'Error adding client: $e');
+      _showSnackBar(context, 'Erreur lors de l\'ajout: $e');
     } finally {
       setState(() {
         _isAdding = false;
@@ -265,23 +263,23 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Remove Client'),
-          content: Text('Are you sure you want to remove ${client.name} from the queue?'),
+          title: const Text('Supprimer le Client'),
+          content: Text('Êtes-vous sûr de vouloir supprimer ${client.name} de la file d\'attente?'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child: const Text('Annuler'),
             ),
             TextButton(
               onPressed: () {
                 context.read<QueueProvider>().removeClient(client.id);
                 Navigator.of(context).pop();
-                _showSnackBar(context, 'Removed ${client.name} from queue');
+                _showSnackBar(context, '${client.name} supprimé de la file');
               },
               child: const Text(
-                'Remove',
+                'Supprimer',
                 style: TextStyle(color: Colors.red),
               ),
             ),
@@ -295,18 +293,18 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     final provider = context.read<QueueProvider>();
 
     try {
-      print('=== TESTING SUPABASE CONNECTION ===');
+      print('=== TEST DE CONNEXION SUPABASE ===');
       final response = await provider.supabaseClient
           .from('clients')
           .select('*')
           .limit(1);
 
-      print('Test connection response: $response');
+      print('Réponse du test de connexion: $response');
 
-      _showSnackBar(context, 'Connection successful! Found ${response.length} items');
+      _showSnackBar(context, 'Connexion réussie! ${response.length} éléments trouvés');
     } catch (e) {
-      print('Connection test failed: $e');
-      _showSnackBar(context, 'Connection failed: $e');
+      print('Échec du test de connexion: $e');
+      _showSnackBar(context, 'Échec de connexion: $e');
     }
   }
 
